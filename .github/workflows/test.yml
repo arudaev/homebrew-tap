@@ -1,0 +1,27 @@
+name: Test
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 6 * * 1" # weekly: Duckwalk's main moves on
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  macos:
+    name: Build and test on macOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tap this checkout
+        run: brew tap arudaev/tap "$GITHUB_WORKSPACE"
+      - name: Install from source
+        run: brew install --HEAD --verbose arudaev/tap/duckwalk
+      - name: Test
+        run: brew test arudaev/tap/duckwalk
+      - name: Style
+        run: brew style arudaev/tap
